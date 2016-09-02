@@ -1,0 +1,156 @@
+{% extends "plans/base.html" %}
+{% load i18n %}
+
+
+{% block head %}
+
+    <script type="text/javascript">
+        $(function () {
+            $('a.invoice').click(function () {
+                event.preventDefault();
+                window.open($(this).attr('href'), 'plans_invoice_{{ invoice.id }}', 'width=860,resizable=1,location=0,status=0,titlebar=1');
+            });
+        });
+
+    </script>
+
+{% endblock %}
+
+
+{% block body %}
+
+
+                <div class="row">
+
+                            <div class="col-md-12">
+                                <form method="post" class="form-horizontal" id="payment-form" action=".">
+                                    {% csrf_token %}
+
+                                     <div  id="card-use">
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label" for="card-number">Card Number</label>
+                                            <div class="col-md-4">
+                                                <input id="card-number" class="form-control"
+                                                       type="text" size="25" placeholder="Card number"
+                                                       autocomplete="off" />
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                                <label class="col-md-4 control-label">Expiration</label>
+                                                <div class="col-md-4">
+                                                    <div class="col-md-3" style="padding-left:0px;">
+                                                            <input id="card-exp-month" class="form-control"
+                                                           type="text" maxlength="2" size="4" placeholder="MM" />
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <input id="card-exp-year" class="form-control"
+                                                               type="text" maxlength="4" size="6" placeholder="YYYY" />
+                                                    </div>
+                                                </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="col-md-4 control-label">Security Code</label>
+                                            <div class="col-md-4">
+                                                <input id="card-cvc" class="form-control"
+                                                        type="text" maxlength="4" size="6" placeholder="CVC"
+                                                        autocomplete="off" />
+                                            </div>
+                                        </div>
+                                        <input type="hidden" name="plan" value="{{order.plan.name}}">
+                                        <input type="hidden" name="amount" value="{{order.total}}">
+                                        <div class="form-group">
+                                                <label class="col-md-5 control-label align_left">&nbsp;</label>
+                                                
+                                                <div class="col-md-2"><button  type="submit" class="payment-submit btn btn-primary btn-lg">Start Now</button></div>
+                                        </div>
+                                    </div>
+
+                                </form>
+                            </div>
+                       </div>
+<script type="text/javascript">
+       /* alert( "Loaded" );
+        var shop_url = 'https://freedom-54.myshopify.com';    
+        console.log( "URL: " + shop_url  );
+        //window.top.location.href = shop_url + "/admin/oauth";
+        ShopifyApp.init( {
+            apiKey: 'b359cf56c354a14d7cf5dfee8899458b',
+            shopOrigin: shop_url,
+            debug: true
+        });
+/*        ShopifyPOS.init({
+          apiKey: 'b359cf56c354a14d7cf5dfee8899458b',
+          shopOrigin: shop_url
+        });
+        ShopifyPOS.ready(function(){
+          //App view is now rendered
+          ShopifyPOS.flashNotice('Hello world!');
+        });*/
+/*        ShopifyApp.ready(function(){
+          alert(ShopifyApp.User.current.accountAccess);
+        });*/
+        function addNewManufacturer() {
+/*       var name = $("#id-manuf-name").val();
+       var address = $("#id-manuf-address").val();
+       var phone = $("#id-manuf-phone").val();*/
+
+       var sendInfo = {
+          "recurring_application_charge": {
+            "name": "Super Duper Plan",
+            "price": 10.0,
+            "return_url": "http:\/\/super-duper.shopifyapps.com",
+            "capped_amount": 100,
+            "terms": "$1 for 1000 emails",
+            "test":true/**/
+          }
+
+       };
+
+/*       $.ajax({
+           type: "POST",
+           url: "https://freedom-54.myshopify.com/admin/recurring_application_charges.json",
+           dataType: "json",
+           headers: {"Content-type":"application/json"},
+           crossDomain: true,
+           //type:'jsonp',
+           success: function (msg) {
+               if (msg) {
+                  console.log(msg);
+                   //location.reload(true);
+               } else {
+                   alert("Cannot add to list !");
+               }
+           },
+
+           data: sendInfo
+       });*/
+       post('https://freedom-54.myshopify.com/admin/recurring_application_charges.json',sendInfo);
+       function post(path, params, method) {
+    method = method || "post"; // Set method to post by default if not specified.
+
+    // The rest of this code assumes you are not using a library.
+    // It can be made less wordy if you use one.
+    var form = document.createElement("form");
+    form.setAttribute("method", method);
+    form.setAttribute("action", path);
+
+    for(var key in params) {
+        if(params.hasOwnProperty(key)) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+         }
+    }
+
+    document.body.appendChild(form);
+    form.submit();
+}
+}
+</script>
+{% endblock %}

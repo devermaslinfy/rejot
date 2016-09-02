@@ -1,0 +1,57 @@
+{% load i18n %}
+{% load  plan_price %}
+<ul class="pricing-table col-4">
+    {% for plan in plan_list %}
+        {% if plan.available %}
+            <li class="fadeInUp contentAnimated finishAnimated">
+                <div class="pricing-container">
+                    <h3>{{ plan.name }}</h3>
+                    <div class="price">
+                        <div class="price-figure">
+                            {% if not plan.is_free %}
+                                {% for plan_pricing in plan.planpricing_set.all %}
+                                    <span class="price-number">{{ plan_pricing|get_price:plan.name }}&nbsp;{{ CURRENCY }}</span>
+                                {% endfor %}
+                                {% else %}
+                                    <span class="price-number">FREE</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <ul class="features">
+                        {% for plan_quota in plan.planquota_set.all %}
+                            {% if plan_quota.quota.is_boolean %}
+                                <li>{{ plan_quota.quota.name }} <i class="fa fa-check"></i></li>
+                                {% else %}
+                                    <li>{{ plan_quota.value }} {{ plan_quota.quota.name }}</li>
+                            {% endif %}
+                        {% endfor %}
+                    </ul>
+                    <div class="footer">
+                        {% for plan_pricing in plan.planpricing_set.all %}
+                       
+                            {% if plan != userplan.plan and not userplan.is_expired and not userplan.plan.is_free and userplan.plan %}
+                                <a href="{% url 'create_order_plan_change' pk=plan.id %}" class="btn btn-inverse btn-block">
+                                    {% if userplan.is_expired or not userplan.plan %}
+                                        {% trans "Select" %}
+                                    {% else %}
+                                        {% trans "Change" %}
+                                    {% endif %}
+                                </a>
+                                {% else %}
+                                {% if request.user.is_authenticated%}
+                                    <a href="{% url 'core:create_order' pk=plan_pricing.pk %}" class="btn btn-inverse btn-block">Buy</a>
+                                {% else %}
+                                   <a href="{% url 'create_order_plan' pk=plan_pricing.pk %}" class="btn btn-inverse btn-block">Buy</a>
+
+                                {% endif %}
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+            </li>
+        {% endif %}
+    {% endfor %}
+</ul>
+<script type="text/javascript">
+    console.log('{{plan_list.0.planquota_set.all.2.quota.is_boolean}}')
+</script>

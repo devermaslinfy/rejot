@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static i18n %}
+{% load bootstrap3 %}
+{% block title %}User: {{ request.user.username }}{% endblock %}
+
+{% block content %}
+<h3>Store: {{ request.user.shop_name }}</h3>
+<h4>Product: {{ object.title }}</h4>
+<br>
+<form action="" method="post">{% csrf_token %}
+    {{ form.as_p }}
+    <input type="submit" value="Update" />
+</form>
+
+{% endblock content %}
